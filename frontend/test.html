@@ -1,0 +1,108 @@
+<html lang="en-US">
+<head>
+  <title>Network Monitor</title>
+  <script type="text/javascript" src="./charts/loader.js"></script>
+  <script type="text/javascript" src="./code/start.js"></script>
+</head>
+<body>
+  <div style="display:flex;">
+    <div id="chartBlock"></div>
+    <div style="margin-top:70px;">
+      <br>Select time interval and method<br>
+      <div style="display:flex;">
+        <div style="margin-right:40px;" id="radioTime">
+          <div><input type="radio" name="interval" id="30" value="30" /><label for="30">30</label></div>
+          <div><input type="radio" name="interval" id="60" value="60" /><label for="60">60</label></div>
+          <div><input type="radio" name="interval" id="120" value="120" /><label for="120">120</label></div>
+          <div><input type="radio" name="interval" id="240" value="240" /><label for="240">240</label></div>
+        </div>
+        <div id="hurstType">
+          <div><input type="radio" name="type" id="RS" value="0" /><label for="RS">RS</label></div>
+          <div><input type="radio" name="type" id="Cov" value="1" /><label for="Cov">Cov</label></div>
+        </div>
+      </div>
+      <button style="margin-top:10px; margin-left:40px; margin-bottom: 50px" type="button" onclick="updateData()">Update!</button>
+
+      <br>You can update your test file. Please enter correct time in minutes (8, 12, 16 etc.)<br>
+      <div style="margin-top: 10px; margin-bottom: 10px">
+        <select id="mySelectTest"></select>
+      </div>
+
+      <input type="text" id="testD" name="test duration" required>
+      <button type="button" onclick="updateTestFile()" style="margin-bottom: 40px">Update test file!</button>
+
+      <br>Select device and start your monitoring<br>
+      <div id="confBlock" style="margin-top:10px; margin-bottom: 10px">
+        <select id="mySelect"></select>
+      </div>
+
+      <button type="button" onclick="startSniffer()">Start!</button>
+      <button type="button" onclick="stopSniffer()">Stop!</button>
+    </div>
+  </div>
+  <div style="margin-left: 150px; margin-top: 40px" id="anomalyTable">
+    <table border = "1" cellpadding = "5" cellspacing = "5">
+      <tr>
+        <th colspan="5">RS</th>
+        <th colspan="5">Cov</th>
+      </tr>
+      <tr>
+        <td>30</td>
+        <td>60</td>
+        <td>120</td>
+        <td>240</td>
+        <td>diff(30-240)</td>
+        <td>30</td>
+        <td>60</td>
+        <td>120</td>
+        <td>240</td>
+        <td>diff(30-240)</td>
+      </tr>
+      <tr id="tableData">
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0</td>
+      </tr>
+    </table>
+  </div>
+
+
+
+
+</body>
+<script type="text/javascript" src="./code/devices.js" defer></script>
+<script type="text/javascript" src="./code/listenSniffer.js"></script>
+<script src="http://code.jquery.com/jquery-3.1.1.js"></script>
+<script type="text/javascript">
+  function doRefresh() {
+    var data = fetchAsync("http://localhost:5000/get-anomaly-count")
+    data.then(
+            result => {
+              $("#show").load("#show");
+              document.getElementById("tableData").innerHTML = "<td>"+result[0]+"</td>" +
+                      "<td>"+result[1]+"</td>" +
+                      "<td>"+result[2]+"</td>" +
+                      "<td>"+result[3]+"</td>" +
+                      "<td>"+result[4]+"</td>" +
+                      "<td>"+result[5]+"</td>" +
+                      "<td>"+result[6]+"</td>" +
+                      "<td>"+result[7]+"</td>" +
+                      "<td>"+result[8]+"</td>" +
+                      "<td>"+result[9]+"</td>"
+            }
+    )
+  }
+
+  $(function () {
+    setInterval(doRefresh, 5000);
+  });
+</script>
+</html>
+
